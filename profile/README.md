@@ -1,9 +1,5 @@
 # Rokid Prism
 
-> Your agents, in one calm place.
-
-[![License: MIT](https://img.shields.io/badge/License-MIT-informational.svg)](./LICENSE)
-
 **English** · [中文](#中文)
 
 ---
