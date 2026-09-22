@@ -1,97 +1,16 @@
-# Rokid Prism
-
-**English** · [中文](#中文)
-
----
-
-## What is Prism?
-
-Prism lets you run AI coding agents where they work best — on your desktop — and stay in control from anywhere. Keep Claude Code, Codex, Hermes, or OpenClaw running on your Mac or PC, then pick up your phone or put on your Rokid glasses to check progress, continue the conversation, answer approval requests, or start new tasks.
-
-This GitHub organization hosts the open-source heart of that ecosystem: the **PluginBridge SDK** and the **official agent plugins** that connect Prism to local agents.
-
-## Features
-
-- **Full visibility** — an Agent → project → thread tree with online / working status, plus usage stats such as token spend, remaining quota, and day streaks
-- **Continue conversations remotely** — send messages and attachments, and follow the full conversation stream rendered with Markdown, tool calls, and step-by-step progress
-- **Stay in control** — switch models, reasoning effort, and permission modes; interrupt a running task at any time
-- **Approvals & planning** — resolve permission requests, manage queued messages, run agents in plan mode, and set or pause goals
-- **Timely notifications** — Web Push alerts for approval requests and task completion
-- **Multilingual** — English, 简体中文, 日本語
-
-## Two ways to use Prism
-
-- **Prism Panel (PWA)** — open <https://prism-panel.rokid.com> in a mobile or desktop browser and add it to your home screen. Install once, manage remote tasks from anywhere.
-- **Rokid Glasses AIUI** — the recommended companion for Rokid glasses. Collaborate on remote tasks hands-free, any time and anywhere, right from your glasses.
-
-## How it works
-
-```mermaid
-flowchart LR
-    M["📱 Phone / Panel"]
-    G["🕶️ Rokid Glasses (AIUI)"]
-    C["Prism Cloud<br>(API + Realtime)"]
-    H["Prism Hub<br>(desktop app)"]
-    P["Plugin"]
-    A["Native agent app<br>(Claude Code, Codex, ...)"]
-
-    M --> C
-    G --> C
-    C <--> H
-    H <--> P
-    P <--> A
-```
-
-Your devices talk to the Prism cloud, the cloud talks to the Prism Hub running on your desktop, and the Hub drives each agent through a plugin. The cloud and desktop layers ship as part of the Prism product — **this organization open-sources and maintains the plugin layer**.
-
-## Repositories
-
-| Repository | What it does |
-| --- | --- |
-| [prism-plugin-sdk](https://github.com/Rokid-Prism/prism-plugin-sdk) | The PluginBridge SDK for building plugins — published as a Go module (`github.com/Rokid-Prism/prism-plugin-sdk`), an npm package (`@rokid-prism/pluginbridge-plugin-sdk`), and a PyPI package (`rokid-pluginbridge-plugin-sdk`). Also defines the plugin manifest schema and conformance suite. |
-| [prism-plugin-claude-code](https://github.com/Rokid-Prism/prism-plugin-claude-code) | Official Claude Code plugin — protocol-native, speaking ACP to a local `claude` runtime |
-| [prism-plugin-codex](https://github.com/Rokid-Prism/prism-plugin-codex) | Official Codex plugin — automates Codex Desktop to browse sessions, read history, and continue threads |
-| [prism-plugin-hermes](https://github.com/Rokid-Prism/prism-plugin-hermes) | Official Hermes plugin — remote sessions via the Hermes gateway |
-| [prism-plugin-openclaw](https://github.com/Rokid-Prism/prism-plugin-openclaw) | Official OpenClaw plugin — protocol-native against the OpenClaw gateway |
-
-### How plugins work
-
-Each plugin is a small program described by a `pluginbridge-plugin.yaml` manifest. Plugins connect in one of two ways:
-
-- **Protocol-native** — talk to the agent through its own protocol (an API, RPC, or CLI), e.g. OpenClaw's gateway or Claude Code over ACP
-- **Desktop automation** — drive the agent's desktop app when no protocol is available, e.g. Codex
-
-Plugins are distributed as GitHub Releases; the Hub discovers, installs, and updates them automatically. See each repository's README for details.
-
-## Contributing
-
-There are two great ways to help Prism support more agents, better:
-
-### 1. Adapt a plugin when an agent updates
-
-Agents move fast — a new release can change menus, UI, or behavior. If an agent you use has updated and its Prism plugin no longer keeps up, that's a perfect contribution: open an issue on the plugin's repository describing what changed, or submit a pull request adapting the plugin yourself.
-
-### 2. Create a plugin for a new agent
-
-Want Prism to support an agent that isn't covered yet? Create a new repository, build a plugin with the [prism-plugin-sdk](https://github.com/Rokid-Prism/prism-plugin-sdk), publish a release, and submit it to the Hub's plugin registry. Once registered, every Prism user can discover and install your plugin.
-
-**Pull requests**: fork the repository, create a branch, and open a PR. Please follow [Conventional Commits](https://www.conventionalcommits.org) (`feat:`, `fix:`, `chore:`) as the existing history does. All public repositories here are MIT licensed, and contributions are accepted under the same license.
-
-## License
-
-All public repositories in this organization are released under the [MIT License](https://opensource.org/license/mit).
-
----
-
 # 中文
 
-**[English](#what-is-prism)** · **中文**
+**[English](#what-is-prism)** / **中文**
+
+
 
 ## Prism 是什么？
 
-Prism 让 AI 编程智能体在最适合它们的地方运行——你的桌面——同时让你在任何地方都保持掌控。让 Claude Code、Codex、Hermes 或 OpenClaw 在你的 Mac 或 PC 上持续工作，然后拿起手机、或戴上 Rokid 眼镜，随时查看进度、继续对话、处理审批，或发起新任务。
+Prism 让你能从手机等移动设备连接桌面端Agent。让 Codex、Hermes 或 OpenClaw 在你的 Mac 或 PC 上持续工作，然后拿起手机、或戴上 Rokid 眼镜，随时随地查看进度、继续对话、处理审批，或发起新任务。
 
-本 GitHub 组织托管这个生态的开源核心：**PluginBridge SDK** 与连接 Prism 与本地智能体的**官方插件**。
+Prism-Rokid 组织托管这个生态的开源部分：**PluginBridge SDK**（本仓库）与连接 Prism 和本地智能体的**官方插件**。
+
+**命名灵感**：像棱镜分光一样，将你的任务散射链接到各个智能体。而智能体就像光谱里的频段一样，可以通过插件的形式支持无限多。
 
 ## 产品功能
 
@@ -127,28 +46,35 @@ flowchart LR
 
 你的设备与 Prism 云端通信，云端与运行在桌面上的 Prism Hub 通信，Hub 再通过插件驱动各个智能体。云端与桌面端随 Prism 产品发布——**本组织开源并维护的是插件层**。
 
-## 仓库结构
+## prism-rokid 组织
 
 | 仓库 | 作用 |
 | --- | --- |
-| [prism-plugin-sdk](https://github.com/Rokid-Prism/prism-plugin-sdk) | 构建插件的 PluginBridge SDK，以三种语言发布：Go module（`github.com/Rokid-Prism/prism-plugin-sdk`）、npm 包（`@rokid-prism/pluginbridge-plugin-sdk`）、PyPI 包（`rokid-pluginbridge-plugin-sdk`）。同时定义插件 manifest 规范与一致性测试套件。 |
-| [prism-plugin-claude-code](https://github.com/Rokid-Prism/prism-plugin-claude-code) | Claude Code 官方插件 — 协议原生，通过 ACP 对接本地 `claude` 运行时 |
-| [prism-plugin-codex](https://github.com/Rokid-Prism/prism-plugin-codex) | Codex 官方插件 — 通过桌面自动化操作 Codex Desktop，浏览会话、读取历史、继续线程 |
-| [prism-plugin-hermes](https://github.com/Rokid-Prism/prism-plugin-hermes) | Hermes 官方插件 — 通过 Hermes 网关实现远程会话 |
-| [prism-plugin-openclaw](https://github.com/Rokid-Prism/prism-plugin-openclaw) | OpenClaw 官方插件 — 协议原生，对接 OpenClaw 网关 |
+| **prism-plugin-sdk**（本仓库） | 构建插件的 PluginBridge SDK，以三种语言发布：Go module（`github.com/prism-rokid/prism-plugin-sdk`）、npm 包（`@prism-rokid/pluginbridge-plugin-sdk`）、PyPI 包（`rokid-pluginbridge-plugin-sdk`）。同时定义插件 manifest 规范与一致性测试套件。 |
+| [prism-plugin-claude-code](https://github.com/prism-rokid/prism-plugin-claude-code) | Claude Code 官方插件 — 协议原生，通过 ACP 对接本地 `claude` 运行时 |
+| [prism-plugin-codex](https://github.com/prism-rokid/prism-plugin-codex) | Codex 官方插件 — 通过桌面自动化操作 Codex Desktop，浏览会话、读取历史、继续线程 |
+| [prism-plugin-hermes](https://github.com/prism-rokid/prism-plugin-hermes) | Hermes 官方插件 — 通过 Hermes 网关实现远程会话 |
+| [prism-plugin-openclaw](https://github.com/prism-rokid/prism-plugin-openclaw) | OpenClaw 官方插件 — 协议原生，对接 OpenClaw 网关 |
 
-### 插件如何工作
+插件以两种方式之一接入智能体：**协议原生**通过智能体自身的协议（API、RPC 或 CLI）通信；**桌面自动化**在没有开放协议时操作智能体的桌面应用。插件以 GitHub Releases 分发，Hub 会自动发现、安装并更新它们。
 
-每个插件是一个由 `pluginbridge-plugin.yaml` manifest 描述的小程序，以两种方式之一接入智能体：
+## SDK 简介
 
-- **协议原生** — 通过智能体自身的协议（API、RPC 或 CLI）通信，如 OpenClaw 网关、通过 ACP 对接的 Claude Code
-- **桌面自动化** — 在没有开放协议时操作智能体的桌面应用，如 Codex
+PluginBridge SDK 提供 Go、TypeScript/Node.js、Python 三种语言开发 Prism 插件所需的一切。一个插件是由 `pluginbridge-plugin.yaml` manifest 描述的小程序：Prism Hub 启动它，并通过 JSON-lines stdio 以 PluginBridge v4 协议通信。三种语言的 SDK 都提供相同的 `serve` 入口——你用各语言的原生类型实现处理函数，SDK 负责转换为锁定的 snake_case 线协议。
 
-插件以 GitHub Releases 分发，Hub 会自动发现、安装并更新它们。详情见各仓库 README。
+| 语言 | 包 | 安装 |
+| --- | --- | --- |
+| Go | `github.com/prism-rokid/prism-plugin-sdk` | `go get github.com/prism-rokid/prism-plugin-sdk@v0.1.1` |
+| Node.js | `@prism-rokid/pluginbridge-plugin-sdk` | `npm install @prism-rokid/pluginbridge-plugin-sdk@0.1.1` |
+| Python | `rokid-pluginbridge-plugin-sdk` | `pip install rokid-pluginbridge-plugin-sdk==0.1.1` |
+
+仓库结构：`example/` 是最小可运行的 Go 插件；`node/`、`python/` 分别是各自语言的 SDK（含独立 README 与示例）；`conformance/` 是 manifest 与 release 元数据的严格 JSON Schema 及校验夹具；`actions/validate-official-manifest` 是供插件发布流程复用的官方 manifest 校验 Action。
+
+manifest 契约、Node 模块格式、发布流程（OIDC trusted publishing）等技术细节见上方英文部分的 [About this SDK](#about-this-sdk)。
 
 ## 如何贡献
 
-想让 Prism 支持更多、更好的智能体？有两种绝佳的参与方式：
+想让 Prism 支持更多、更好的智能体？有两种参与方式：
 
 ### 1. 智能体更新时，为插件贡献适配
 
@@ -156,10 +82,12 @@ flowchart LR
 
 ### 2. 为新智能体创建插件
 
-希望 Prism 支持尚未覆盖的智能体？创建一个新仓库，用 [prism-plugin-sdk](https://github.com/Rokid-Prism/prism-plugin-sdk) 开发插件，发布 Release 并提交注册到 Hub 的插件目录。注册完成后，所有 Prism 用户都能发现并安装你的插件。
+希望 Prism 支持尚未覆盖的智能体？创建一个新仓库，用本 SDK 开发插件，发布 Release 并提交注册到 Hub 的插件目录。注册完成后，所有 Prism 用户都能发现并安装你的插件。上手请看 [About this SDK](#about-this-sdk) 与 `example/`、`node/example/`、`python/example/` 中的示例。
 
-**Pull Request**：fork 仓库 → 新建分支 → 提交 PR。提交信息请遵循 [Conventional Commits](https://www.conventionalcommits.org)（`feat:`、`fix:`、`chore:`），与现有提交历史保持一致。本组织所有公开仓库均采用 MIT 协议，贡献同样按 MIT 授权。
+SDK 本身的改进——新的辅助函数、文档、缺陷修复——同样欢迎：fork → 分支 → Pull Request。
+
+**Pull Request**：提交信息请遵循 [Conventional Commits](https://www.conventionalcommits.org)（`feat:`、`fix:`、`chore:`），与现有提交历史保持一致。本组织所有公开仓库均采用 MIT 协议，贡献同样按 MIT 授权。
 
 ## 协议
 
-本组织所有公开仓库均基于 [MIT License](https://opensource.org/license/mit) 发布。
+[MIT](./LICENSE)
