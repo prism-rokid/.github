@@ -1,3 +1,155 @@
+# Rokid Prism
+
+
+
+**English** / [中文](#中文)
+
+
+## What is Prism?
+
+Prism lets you run AI coding agents where they work best — on your desktop — and stay in control from anywhere. Keep Claude Code, Codex, Hermes, or OpenClaw running on your Mac or PC, then pick up your phone or put on your Rokid glasses to check progress, continue the conversation, answer approval requests, or start new tasks.
+
+The prism-rokid organization hosts the open-source part of that ecosystem: the **PluginBridge SDK** (this repository) and the **official agent plugins** that connect Prism to local agents.
+
+**Naming inspiration**: Like a prism splitting light, Prism scatters your tasks and links them to your agents. And just as a spectrum holds countless bands of light, agents can be extended without limit through plugins.
+
+## Features
+
+- **Full visibility** — an Agent → project → thread tree with online / working status, plus usage stats such as token spend, remaining quota, and day streaks
+- **Continue conversations remotely** — send messages and attachments, and follow the full conversation stream rendered with Markdown, tool calls, and step-by-step progress
+- **Stay in control** — switch models, reasoning effort, and permission modes; interrupt a running task at any time
+- **Approvals & planning** — resolve permission requests, manage queued messages, run agents in plan mode, and set or pause goals
+- **Timely notifications** — Web Push alerts for approval requests and task completion
+- **Multilingual** — English, 简体中文, 日本語
+
+## Two ways to use Prism
+
+- **Prism Panel (PWA)** — open <https://prism-panel.rokid.com> in a mobile or desktop browser and add it to your home screen. Install once, manage remote tasks from anywhere.
+- **Rokid Glasses AIUI** — the recommended companion for Rokid glasses. Collaborate on remote tasks hands-free, any time and anywhere, right from your glasses.
+
+## How it works
+
+```mermaid
+flowchart LR
+    M["📱 Phone / Panel"]
+    G["🕶️ Rokid Glasses (AIUI)"]
+    C["Prism Cloud<br>(API + Realtime)"]
+    H["Prism Hub<br>(desktop app)"]
+    P["Plugin"]
+    A["Native agent app<br>(Claude Code, Codex, ...)"]
+
+    M --> C
+    G --> C
+    C <--> H
+    H <--> P
+    P <--> A
+```
+
+Your devices talk to the Prism cloud, the cloud talks to the Prism Hub running on your desktop, and the Hub drives each agent through a plugin. The cloud and desktop layers ship as part of the Prism product — **this organization open-sources and maintains the plugin layer**.
+
+## The prism-rokid organization
+
+| Repository | What it does |
+| --- | --- |
+| **prism-plugin-sdk** (this repository) | The PluginBridge SDK for building plugins — published as a Go module (`github.com/prism-rokid/prism-plugin-sdk`), an npm package (`@prism-rokid/pluginbridge-plugin-sdk`), and a PyPI package (`rokid-pluginbridge-plugin-sdk`). Also defines the plugin manifest schema and conformance suite. |
+| [prism-plugin-claude-code](https://github.com/prism-rokid/prism-plugin-claude-code) | Official Claude Code plugin — protocol-native, speaking ACP to a local `claude` runtime |
+| [prism-plugin-codex](https://github.com/prism-rokid/prism-plugin-codex) | Official Codex plugin — automates Codex Desktop to browse sessions, read history, and continue threads |
+| [prism-plugin-hermes](https://github.com/prism-rokid/prism-plugin-hermes) | Official Hermes plugin — remote sessions via the Hermes gateway |
+| [prism-plugin-openclaw](https://github.com/prism-rokid/prism-plugin-openclaw) | Official OpenClaw plugin — protocol-native against the OpenClaw gateway |
+
+Plugins connect in one of two ways: **protocol-native** plugins talk to the agent through its own protocol (an API, RPC, or CLI), while **desktop-automation** plugins drive the agent's desktop app when no protocol is available. Plugins are distributed as GitHub Releases; the Hub discovers, installs, and updates them automatically.
+
+## About this SDK
+
+The PluginBridge SDK is everything you need to build a Prism plugin in Go, TypeScript/Node.js, or Python. A plugin is a small program described by a `pluginbridge-plugin.yaml` manifest; the Prism Hub launches it and speaks the PluginBridge v4 protocol to it over JSON-lines stdio. All three SDKs expose the same `serve` entry point — you implement handlers with idiomatic language-native types, and the SDK converts them to the locked snake_case wire protocol.
+
+| Language | Distribution | Install |
+| --- | --- | --- |
+| Go | `github.com/prism-rokid/prism-plugin-sdk` | `go get github.com/prism-rokid/prism-plugin-sdk@v0.1.1` |
+| Node.js | `@prism-rokid/pluginbridge-plugin-sdk` | `npm install @prism-rokid/pluginbridge-plugin-sdk@0.1.1` |
+| Python | `rokid-pluginbridge-plugin-sdk` | `pip install rokid-pluginbridge-plugin-sdk==0.1.1` |
+
+```go
+import pluginbridge "github.com/prism-rokid/prism-plugin-sdk"
+```
+
+```ts
+import { serve } from "@prism-rokid/pluginbridge-plugin-sdk";
+// CommonJS: const { serve } = require("@prism-rokid/pluginbridge-plugin-sdk");
+```
+
+```python
+from pluginbridge import serve
+```
+
+### Repository layout
+
+- `example/` — a minimal working Go plugin (`main.go` + manifest)
+- `node/` — the TypeScript/Node.js SDK, with its own [README](node/README.md) and `node/example/`
+- `python/` — the Python SDK, with its own [README](python/README.md), tests, and `python/example/`
+- `conformance/` — the strict JSON Schemas for plugin manifests and release metadata, plus validation fixtures
+- `actions/validate-official-manifest` — a reusable GitHub Action that enforces the official manifest rules in plugin release workflows
+
+### Node module formats
+
+`@prism-rokid/pluginbridge-plugin-sdk` exports both ESM and CommonJS entry points.
+Use `import` from ESM or `require` from CommonJS; TypeScript declarations are
+shared. The `/desktop-automation-runtime` and `/cdp-runtime` subpaths remain
+CommonJS for existing Codex and Hermes adapters.
+
+### Manifest contract
+
+[`conformance/manifest.schema.json`](conformance/manifest.schema.json) is the
+strict JSON Schema for a PluginBridge v4 manifest. It permits legacy plugins
+to omit icons, but official plugin release CI must require both `icon_url` and
+`icon_svg_url`. The same official release check requires `schema_version: 1`
+and `plugin_protocol_version: "4"`; the base schema leaves them optional only
+for legacy and third-party compatibility.
+
+- `icon_url`: optional absolute HTTPS bitmap URL (max 1024 characters).
+- `icon_svg_url`: optional absolute HTTPS SVG URL (max 1024 characters).
+- `runtime_dependencies.node`: optional semver range such as
+  `>=22.0.0 <23.0.0`.
+- `command`: can reference the Hub-managed Node binary only as
+  `${runtime.node}`; it is never expanded by the SDK.
+
+The SDK deliberately does not fetch, inline, inspect, or execute SVG files.
+
+[`conformance/plugin-release.schema.json`](conformance/plugin-release.schema.json) defines the signed/checked release
+metadata consumed by the Hub registry.
+
+### Release
+
+Tags of the form `v*` validate all three SDKs, build Go and Node artifacts,
+and publish npm and PyPI through OIDC trusted publishing. Configure npm trusted
+publisher and PyPI trusted publisher for this repository before tagging.
+
+This repository's npm configuration defaults to the npmmirror registry for
+dependency installation. The release workflow explicitly switches publishing
+to the official npm registry, as required by npm Trusted Publishing.
+
+## Contributing
+
+There are two great ways to help Prism support more agents, better:
+
+### 1. Adapt a plugin when an agent updates
+
+Agents move fast — a new release can change menus, UI, or behavior. If an agent you use has updated and its Prism plugin no longer keeps up, that's a perfect contribution: open an issue on the plugin's repository describing what changed, or submit a pull request adapting the plugin yourself.
+
+### 2. Create a plugin for a new agent
+
+Want Prism to support an agent that isn't covered yet? Create a new repository, build a plugin with this SDK, publish a release, and submit it to the Hub's plugin registry. Once registered, every Prism user can discover and install your plugin. The [manifest contract](#manifest-contract) above and the examples in `example/`, `node/example/`, and `python/example/` are the place to start.
+
+Improvements to the SDK itself — new helpers, docs, bug fixes — are welcome here too: fork → branch → pull request.
+
+**Pull requests**: please follow [Conventional Commits](https://www.conventionalcommits.org) (`feat:`, `fix:`, `chore:`) as the existing history does. All public repositories in the organization are MIT licensed, and contributions are accepted under the same license.
+
+## License
+
+[MIT](./LICENSE)
+
+---
+
 # 中文
 
 **[English](#what-is-prism)** / **中文**
