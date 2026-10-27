@@ -24,7 +24,7 @@ The prism-rokid organization hosts the open-source part of that ecosystem: the *
 
 ## Two ways to use Prism
 
-- **Prism Panel (PWA)** — open <https://prism-panel.rokid.com> in a mobile or desktop browser and add it to your home screen. Install once, manage remote tasks from anywhere.
+- **Prism Panel (PWA)** — open <https://prism.rokid.com> in a mobile or desktop browser and add it to your home screen. Install once, manage remote tasks from anywhere.
 - **Rokid Glasses AIUI** — the recommended companion for Rokid glasses. Collaborate on remote tasks hands-free, any time and anywhere, right from your glasses.
 
 ## How it works
@@ -175,7 +175,7 @@ Prism-Rokid 组织托管这个生态的开源部分：**PluginBridge SDK**（本
 
 ## 两种使用方式
 
-- **Prism Panel（PWA）** — 在手机或桌面浏览器打开 <https://prism-panel.rokid.com>，即可添加到主屏幕。一次安装，随处管理远程任务。
+- **Prism Panel（PWA）** — 在手机或桌面浏览器打开 <https://prism.rokid.com>，即可添加到主屏幕。一次安装，随处管理远程任务。
 - **Rokid Glasses AIUI** — 推荐搭配 Rokid 眼镜使用。通过眼镜随时随地进行远程任务协作，解放双手。
 
 ## 工作原理
